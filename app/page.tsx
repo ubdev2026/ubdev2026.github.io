@@ -248,42 +248,41 @@ export default function Home() {
       // Check if running in Capacitor native environment
       const isNative = Capacitor.isNativePlatform();
 
-      if (isNative) {
-        // ✅ Native environment - use InAppBrowser plugin
-        await InAppBrowser.openInWebView({
-          url: domain.redirectUrl,
-          options: {
-            android: {
-              isIsolated: false, // Allow interaction with main app
-              hardwareBack: true,
-              allowZoom: false,
-              pauseMedia: false,
-            },
-            iOS: {
-              allowOverScroll: false,
-              enableViewportScale: false,
-              allowInLineMediaPlayback: false,
-              surpressIncrementalRendering: false,
-              viewStyle: iOSViewStyle.PAGE_SHEET,
-              animationEffect: iOSAnimation.FLIP_HORIZONTAL,
-              allowsBackForwardNavigationGestures: false,
-            },
-            showURL: false,
-            showToolbar: false,
-            clearCache: false,
-            clearSessionCache: false,
-            mediaPlaybackRequiresUserAction: false,
-            closeButtonText: "",
-            toolbarPosition: ToolbarPosition.TOP,
-            showNavigationButtons: false,
-            leftToRight: false,
-          },
-        });
-      } else {
-        // ✅ Web environment - use window.open or location.assign
-        console.log("Opening in web browser:", domain.redirectUrl);
-        // window.location.assign(domain.redirectUrl);
-      }
+      // if (isNative) {
+      //   await InAppBrowser.openInWebView({
+      //     url: domain.redirectUrl,
+      //     options: {
+      //       android: {
+      //         isIsolated: false,
+      //         hardwareBack: true,
+      //         allowZoom: false,
+      //         pauseMedia: false,
+      //       },
+      //       iOS: {
+      //         allowOverScroll: false,
+      //         enableViewportScale: false,
+      //         allowInLineMediaPlayback: false,
+      //         surpressIncrementalRendering: false,
+      //         viewStyle: iOSViewStyle.PAGE_SHEET,
+      //         animationEffect: iOSAnimation.FLIP_HORIZONTAL,
+      //         allowsBackForwardNavigationGestures: false,
+      //       },
+      //       showURL: false,
+      //       showToolbar: false,
+      //       clearCache: false,
+      //       clearSessionCache: false,
+      //       mediaPlaybackRequiresUserAction: false,
+      //       closeButtonText: "",
+      //       toolbarPosition: ToolbarPosition.TOP,
+      //       showNavigationButtons: false,
+      //       leftToRight: false,
+      //     },
+      //   });
+      // } else {
+      //   // ✅ Web environment - use window.open or location.assign
+      //   console.log("Opening in web browser:", domain.redirectUrl);
+      //   window.location.assign(domain.redirectUrl);
+      // }
     } catch (error) {
       console.error("Failed to open URL:", error);
       setShowManualRedirect(true);
