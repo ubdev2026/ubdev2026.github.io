@@ -1,0 +1,5 @@
+1:"$Sreact.fragment"
+2:I[97367,["/_next/static/chunks/1h-d31473be5v.js","/_next/static/chunks/14mumt5_n0xhi.js"],"OutletBoundary"]
+3:"$Sreact.suspense"
+0:{"rsc":["$","$1","c",{"children":[["$","div",null,{"className":"p-10","children":[["$","h1",null,{"className":"text-4xl mb-4 font-bold","children":"Woohoo! You're on the Contact page!"}],["$","h2",null,{"children":"Looks like the redirect worked! (You came here from the notification)"}]]}],null,["$","$L2",null,{"children":["$","$3",null,{"name":"Next.MetadataOutlet","children":"$@4"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"E2_c3SjBv45ur-gTlNOoN"}
+4:null
