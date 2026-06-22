@@ -1,17 +1,17 @@
 importScripts("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
 importScripts(
-  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js"
+  "https://www.gstatic.com/firebasejs/8.10.1/firebase-messaging.js",
 );
 
 // Replace these with your own Firebase config keys...
 const firebaseConfig = {
-  apiKey: null,
-  authDomain: null,
-  projectId: null,
-  storageBucket: null,
-  messagingSenderId: null,
-  appId: null,
-  measurementId: null,
+  apiKey: "AIzaSyDZH8e6GfRy9HM1bolhHcd8z2YEsFO1vrk",
+  authDomain: "ubapp-440f2.firebaseapp.com",
+  projectId: "ubapp-440f2",
+  storageBucket: "ubapp-440f2.firebasestorage.app",
+  messagingSenderId: "63410120475",
+  appId: "1:63410120475:web:84508dbbc899d1445e95be",
+  measurementId: "G-JBDQ3GHNMK",
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -21,7 +21,7 @@ const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
   console.log(
     "[firebase-messaging-sw.js] Received background message ",
-    payload
+    payload,
   );
 
   // payload.fcmOptions?.link comes from our backend API route handle
@@ -63,6 +63,6 @@ self.addEventListener("notificationclick", function (event) {
           console.log("OPENWINDOW ON CLIENT");
           return clients.openWindow(url);
         }
-      })
+      }),
   );
 });
