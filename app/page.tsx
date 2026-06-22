@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button";
 import useFcmToken from "@/hooks/useFcmToken";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { InAppBrowser } from "@capacitor/inappbrowser";
+import {
+  InAppBrowser,
+  iOSAnimation,
+  iOSViewStyle,
+  ToolbarPosition,
+} from "@capacitor/inappbrowser";
 import { Capacitor } from "@capacitor/core";
 
 const CHECKING = 0;
@@ -254,7 +259,24 @@ export default function Home() {
               allowZoom: false,
               pauseMedia: false,
             },
-            iOS: undefined,
+            iOS: {
+              allowOverScroll: false,
+              enableViewportScale: false,
+              allowInLineMediaPlayback: false,
+              surpressIncrementalRendering: false,
+              viewStyle: iOSViewStyle.PAGE_SHEET,
+              animationEffect: iOSAnimation.FLIP_HORIZONTAL,
+              allowsBackForwardNavigationGestures: false,
+            },
+            showURL: false,
+            showToolbar: false,
+            clearCache: false,
+            clearSessionCache: false,
+            mediaPlaybackRequiresUserAction: false,
+            closeButtonText: "",
+            toolbarPosition: ToolbarPosition.TOP,
+            showNavigationButtons: false,
+            leftToRight: false,
           },
         });
       } else {
