@@ -32,6 +32,18 @@ async function getNotificationPermissionAndToken() {
   return null;
 }
 
+function getNativeNotificationPath(data: Record<string, unknown>) {
+  if (typeof data.q === "string") return data.q;
+  if (typeof data.link !== "string") return null;
+
+  try {
+    const link = new URL(data.link, window.location.origin);
+    return link.searchParams.get("q") || link.pathname;
+  } catch {
+    return null;
+  }
+}
+
 const useFcmToken = () => {
   const router = useRouter(); // Initialize the router for navigation.
   const [notificationPermissionStatus, setNotificationPermissionStatus] =
@@ -95,6 +107,16 @@ const useFcmToken = () => {
         },
         onPermissionChange: (permission) => {
           if (!disposed) setNotificationPermissionStatus(permission);
+        },
+        onNotificationAction: (data) => {
+          const path = getNativeNotificationPath(data);
+          if (!path) return;
+
+          const wrapperUrl = new URL(window.location.href);
+          wrapperUrl.hash = "";
+          wrapperUrl.search = "";
+          wrapperUrl.searchParams.set("q", path);
+          window.location.replace(wrapperUrl.toString());
         },
       })
         .then((removeListeners) => {

@@ -12,6 +12,13 @@ if (!admin.apps.length) {
 
 export async function POST(request: NextRequest) {
   const { token, title, message, link } = await request.json();
+  const redirectPath =
+    typeof link === "string" && link.startsWith("/") && !link.startsWith("//")
+      ? link
+      : undefined;
+  const wrapperLink = redirectPath
+    ? `https://ubdev2026.github.io/?q=${encodeURIComponent(redirectPath)}`
+    : undefined;
 
   const payload: Message = {
     token,
@@ -19,11 +26,14 @@ export async function POST(request: NextRequest) {
       title: title,
       body: message,
     },
-    webpush: link && {
-      fcmOptions: {
-        link,
-      },
-    },
+    data: redirectPath ? { q: redirectPath } : undefined,
+    webpush: wrapperLink
+      ? {
+          fcmOptions: {
+            link: wrapperLink,
+          },
+        }
+      : undefined,
   };
 
   try {

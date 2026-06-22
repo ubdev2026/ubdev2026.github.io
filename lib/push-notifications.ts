@@ -4,11 +4,13 @@ import { PushNotifications } from "@capacitor/push-notifications";
 type PushNotificationOptions = {
   onToken?: (token: string) => void;
   onPermissionChange?: (permission: "granted" | "denied") => void;
+  onNotificationAction?: (data: Record<string, unknown>) => void;
 };
 
 export async function initPushNotifications({
   onToken,
   onPermissionChange,
+  onNotificationAction,
 }: PushNotificationOptions = {}) {
   if (!Capacitor.isNativePlatform()) return () => Promise.resolve();
 
@@ -32,6 +34,7 @@ export async function initPushNotifications({
       "pushNotificationActionPerformed",
       (action) => {
         console.log("Push notification opened:", action.notification);
+        onNotificationAction?.(action.notification.data ?? {});
       },
     ),
   ]);

@@ -89,7 +89,32 @@ function loadStoredDomain() {
   }
 }
 
-function buildDomainsForHash() {
+function getRequestedPath() {
+  const queryPath = new URLSearchParams(window.location.search).get("q");
+  const hashPath = hashes.find(
+    ({ hash }) => hash === window.location.hash,
+  )?.relUrl;
+  const requestedPath = queryPath || hashPath || "";
+
+  if (!requestedPath) return "";
+
+  // Only permit paths within the selected Unlibets domain. In particular,
+  // reject protocol-relative values such as //malicious.example.
+  if (!requestedPath.startsWith("/") || requestedPath.startsWith("//")) {
+    console.warn("Ignoring invalid redirect path:", requestedPath);
+    return "";
+  }
+
+  try {
+    const normalized = new URL(requestedPath, window.location.origin);
+    return `${normalized.pathname}${normalized.search}${normalized.hash}`;
+  } catch {
+    console.warn("Ignoring malformed redirect path:", requestedPath);
+    return "";
+  }
+}
+
+function buildDomainsForRequest() {
   const storedDomain = loadStoredDomain();
   const domains = baseDomains.map(cloneDomain);
 
@@ -100,10 +125,10 @@ function buildDomainsForHash() {
     domains.unshift(storedDomain);
   }
 
-  const match = hashes.find(({ hash }) => hash === window.location.hash);
+  const requestedPath = getRequestedPath();
   return domains.map((domain) => ({
     ...domain,
-    redirectUrl: domain.url + (match?.relUrl || ""),
+    redirectUrl: domain.url + requestedPath,
   }));
 }
 
@@ -324,7 +349,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const hydratedDomains = buildDomainsForHash();
+    const hydratedDomains = buildDomainsForRequest();
     storedDomainRef.current = loadStoredDomain();
     initialDomainsRef.current = hydratedDomains;
     setDomains(hydratedDomains);
