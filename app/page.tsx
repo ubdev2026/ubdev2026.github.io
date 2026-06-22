@@ -10,7 +10,7 @@ import {
   iOSViewStyle,
   ToolbarPosition,
 } from "@capacitor/inappbrowser";
-import { Capacitor } from "@capacitor/core";
+import { Capacitor, CapacitorHttp } from "@capacitor/core";
 
 const CHECKING = 0;
 const AVAILABLE = 1;
@@ -179,14 +179,40 @@ export default function Home() {
 
   const sendRequest = useCallback(
     async (url: string, index: number, type: "api" | "static") => {
-      const controller = new AbortController();
-      const timeout = window.setTimeout(() => controller.abort(), 5000);
-
       try {
-        const response = await fetch(`${url}?t=${Date.now()}`, {
-          cache: "no-store",
-          signal: controller.signal,
-        });
+        const requestUrl = `${url}?t=${Date.now()}`;
+
+        if (Capacitor.isNativePlatform()) {
+          // Native HTTP bypasses WebView CORS. The packaged app runs from
+          // http://localhost, which the health APIs do not currently allow.
+          const response = await CapacitorHttp.get({
+            url: requestUrl,
+            connectTimeout: 5000,
+            readTimeout: 5000,
+            headers: { "Cache-Control": "no-cache" },
+            responseType: "text",
+          });
+
+          if (response.status < 200 || response.status >= 400) {
+            throw new Error(`Health check failed with ${response.status}`);
+          }
+
+          updateHealthStatus(index, type, AVAILABLE);
+          return { response, index };
+        }
+
+        const controller = new AbortController();
+        const timeout = window.setTimeout(() => controller.abort(), 5000);
+        let response: Response;
+
+        try {
+          response = await fetch(requestUrl, {
+            cache: "no-store",
+            signal: controller.signal,
+          });
+        } finally {
+          window.clearTimeout(timeout);
+        }
 
         if (!response.ok) {
           throw new Error(`Health check failed with ${response.status}`);
@@ -195,10 +221,9 @@ export default function Home() {
         updateHealthStatus(index, type, AVAILABLE);
         return { response, index };
       } catch (exception) {
+        console.error(`Health check failed for ${url}:`, exception);
         updateHealthStatus(index, type, FAILED);
         throw { exception, index };
-      } finally {
-        window.clearTimeout(timeout);
       }
     },
     [updateHealthStatus],
