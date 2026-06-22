@@ -5,6 +5,8 @@ import { getToken, onMessage, Unsubscribe } from "firebase/messaging";
 import { fetchToken, messaging } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Capacitor } from "@capacitor/core";
+import { initPushNotifications } from "@/lib/push-notifications";
 
 async function getNotificationPermissionAndToken() {
   // Step 1: Check if Notifications are supported in the browser.
@@ -83,18 +85,45 @@ const useFcmToken = () => {
   };
 
   useEffect(() => {
-    // Step 8: Initialize token loading when the component mounts.
-    if ("Notification" in window) {
-      loadToken();
+    if (Capacitor.isNativePlatform()) {
+      let disposed = false;
+      let removeNativeListeners: (() => Promise<unknown>) | undefined;
+
+      void initPushNotifications({
+        onToken: (nativeToken) => {
+          if (!disposed) setToken(nativeToken);
+        },
+        onPermissionChange: (permission) => {
+          if (!disposed) setNotificationPermissionStatus(permission);
+        },
+      })
+        .then((removeListeners) => {
+          if (disposed) {
+            void removeListeners();
+          } else {
+            removeNativeListeners = removeListeners;
+          }
+        })
+        .catch((error) => {
+          console.error("Unable to initialize native push notifications:", error);
+        });
+
+      return () => {
+        disposed = true;
+        void removeNativeListeners?.();
+      };
     }
+
+    // Browser builds use the Firebase Web Messaging SDK and service worker.
+    if ("Notification" in window) void loadToken();
   }, []);
 
   useEffect(() => {
     const setupListener = async () => {
-      console.log(token);
+      if (Capacitor.isNativePlatform()) return;
       if (!token) return; // Exit if no token is available.
 
-      alert(`${token}`);
+      console.log("FCM web token:", token);
       const m = await messaging();
       if (!m) return;
 
