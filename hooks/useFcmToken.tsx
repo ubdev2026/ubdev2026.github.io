@@ -92,6 +92,7 @@ const useFcmToken = () => {
   useEffect(() => {
     const setupListener = async () => {
       if (!token) return; // Exit if no token is available.
+      console.log(token);
 
       alert(`${token}`);
       const m = await messaging();
