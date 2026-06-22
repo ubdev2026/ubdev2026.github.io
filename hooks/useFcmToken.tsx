@@ -50,7 +50,7 @@ const useFcmToken = () => {
       setNotificationPermissionStatus("denied");
       console.info(
         "%cPush Notifications issue - permission denied",
-        "color: green; background: #c7c7c7; padding: 8px; font-size: 20px"
+        "color: green; background: #c7c7c7; padding: 8px; font-size: 20px",
       );
       isLoading.current = false;
       return;
@@ -63,7 +63,7 @@ const useFcmToken = () => {
         alert("Unable to load token, refresh the browser");
         console.info(
           "%cPush Notifications issue - unable to load token after 3 retries",
-          "color: green; background: #c7c7c7; padding: 8px; font-size: 20px"
+          "color: green; background: #c7c7c7; padding: 8px; font-size: 20px",
         );
         isLoading.current = false;
         return;
@@ -93,7 +93,7 @@ const useFcmToken = () => {
     const setupListener = async () => {
       if (!token) return; // Exit if no token is available.
 
-      console.log(`onMessage registered with token ${token}`);
+      alert(`${token}`);
       const m = await messaging();
       if (!m) return;
 
@@ -117,11 +117,11 @@ const useFcmToken = () => {
                   }
                 },
               },
-            }
+            },
           );
         } else {
           toast.info(
-            `${payload.notification?.title}: ${payload.notification?.body}`
+            `${payload.notification?.title}: ${payload.notification?.body}`,
           );
         }
 
@@ -132,7 +132,7 @@ const useFcmToken = () => {
           {
             body: payload.notification?.body || "This is a new message",
             data: link ? { url: link } : undefined,
-          }
+          },
         );
 
         // Step 10: Handle notification click event to navigate to a link if present.
