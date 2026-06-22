@@ -282,7 +282,7 @@ export default function Home() {
       } else {
         // ✅ Web environment - use window.open or location.assign
         console.log("Opening in web browser:", domain.redirectUrl);
-        window.location.assign(domain.redirectUrl);
+        // window.location.assign(domain.redirectUrl);
       }
     } catch (error) {
       console.error("Failed to open URL:", error);
