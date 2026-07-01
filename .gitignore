@@ -42,5 +42,4 @@ service_key.json
 /android
 /ios
 /www
-/capacitor.config.json
-google-services.json
+/capacitor.config.ts
